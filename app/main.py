@@ -6,10 +6,13 @@ from starlette.middleware.cors import CORSMiddleware
 from app.api.main import api_router
 from app.core.config import settings
 
+# Add database initialization to startup
+from app.core.db import init_db
+from sqlmodel import Session
+from app.core.db import engine
 
 def custom_generate_unique_id(route: APIRoute) -> str:
     return f"{route.tags[0]}-{route.name}"
-
 
 if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
     sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
@@ -31,3 +34,9 @@ if settings.all_cors_origins:
     )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+# Add database initialization to startup
+@app.on_event("startup")
+async def on_startup():
+    with Session(engine) as session:
+        init_db(session)
