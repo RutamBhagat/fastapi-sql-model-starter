@@ -63,19 +63,8 @@ class Settings(BaseSettings):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
-        # Comment out PostgreSQL URI builder
-        # return MultiHostUrl.build(
-        #     scheme="postgresql+psycopg",
-        #     username=self.POSTGRES_USER,
-        #     password=self.POSTGRES_PASSWORD,
-        #     host=self.POSTGRES_SERVER,
-        #     port=self.POSTGRES_PORT,
-        #     path=self.POSTGRES_DB,
-        # )
-        # Add SQLite URI builder
-        base_path = Path(__file__).parent.parent.parent
-        db_path = base_path / self.SQLITE_DB
-        return f"sqlite:///{db_path}"
+        sqlite_path = self.SQLITE_DB  # Default path in project root
+        return f"sqlite:///{sqlite_path}"
 
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
