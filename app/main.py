@@ -31,7 +31,26 @@ if settings.all_cors_origins:
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+        expose_headers=["*"],  # Add this
+        max_age=3600,  # Add this
     )
+
+
+# add a root and healthcheck route
+@app.get("/")
+async def root_route():
+    return {"message": "Welcome to the FastAPI app!"}
+
+
+@app.head("/")
+async def root_head():
+    return {"message": "This is a HEAD request"}
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
