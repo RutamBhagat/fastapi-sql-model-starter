@@ -12,8 +12,10 @@ from app.core.config import settings
 from app.core.db import init_db, engine
 from sqlmodel import Session
 
+
 def custom_generate_unique_id(route: APIRoute) -> str:
     return f"{route.tags[0]}-{route.name}"
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
@@ -24,16 +26,17 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Startup
     if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
         sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
-    
+
     # Initialize database
     with Session(engine) as session:
         init_db(session)
-    
+
     yield  # Server is running and handling requests
-    
+
     # Cleanup (if needed)
     # Add any cleanup code here that should run on shutdown
     # For example: close database connections, cleanup resources, etc.
+
 
 # Create FastAPI app with lifespan
 app = FastAPI(
